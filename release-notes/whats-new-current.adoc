@@ -1,0 +1,25 @@
+---
+sidebar: sidebar 
+permalink: release-notes/whats-new-current.html 
+keywords: 'novus release notes, novus what"s new' 
+summary: Scopri le nuove funzionalità incluse in NetApp Novus. 
+---
+= Novità nella release iniziale del sistema storage Novus
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Scopri le nuove funzionalità incluse in NetApp Novus.
+
+
+
+[[novus-initial-release]]
+== Rilascio iniziale di Novus
+
+NetApp Novus combina la scalabilità di NFS parallelo (pNFS) con le comprovate funzionalità di gestione dei dati di ONTAP, offrendo una soluzione storage ad elevate performance per l'AI e altri carichi di lavoro a elevata intensità di dati. È progettato per offrire throughput all'avanguardia e bassa latenza, per soddisfare i requisiti dei clienti con sistemi di calcolo exascale e fabbriche AI su scala gigawatt. Consulta le pagine seguenti per saperne di più sulla sua architettura e sui requisiti di implementazione.
+
+* link:../get-started/learn-novus.html["Scopri di più su Novus"]
+* link:../get-started/requirements.html["Requisiti di Novus"]
+

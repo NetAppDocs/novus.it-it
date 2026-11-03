@@ -1,0 +1,100 @@
+---
+sidebar: sidebar 
+permalink: get-started/learn-novus.html 
+keywords: novus, learn more, design, design principles, pnfs, novus components, namespace, bgp 
+summary: 'NetApp Novus è un nuovo e potente sistema storage progettato per le esigenze dell"intelligenza artificiale su scala molto ampia. Estende l"esperienza di NetApp nello storage enterprise all"infrastruttura dalle performance elevate necessaria per l"addestramento e l"inferenza. Comprendere la sua struttura amministrativa e le opzioni di configurazione è fondamentale per una gestione efficace e prestazioni ottimali.' 
+---
+= Scopri i sistemi di storage Novus
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+NetApp Novus è un potente sistema storage progettato per le esigenze dell'intelligenza artificiale su scala molto ampia. Estende l'esperienza di NetApp nello storage enterprise all'infrastruttura dalle performance estremamente elevate necessaria per l'addestramento e l'inferenza. Comprendere la sua struttura amministrativa e le opzioni di configurazione è fondamentale per una gestione efficace e prestazioni ottimali.
+
+
+
+[[overview]]
+== Panoramica
+
+NetApp Novus è una soluzione di file storage scale-out progettata per il throughput e la scalabilità necessari per i moderni carichi di lavoro AI. Unisce molti cluster storage ONTAP indipendenti in un unico namespace che i client vedono come un unico file system. Novus si basa su NFS parallelo (pNFS), che separa i metadati dai dati dei file. Un servizio di metadati dedicato gestisce il namespace, mentre i cluster storage forniscono i dati dei file direttamente ai client in parallelo. Questo elimina il limite di throughput di un singolo cluster, che non limita più la velocità con cui il sistema può fornire i dati.
+
+Un'implementazione Novus può crescere semplicemente aggiungendo cluster di storage. Ogni nuovo cluster aggiunge tutta la sua larghezza di banda e capacità allo spazio dei nomi, quindi il throughput aumenta con la crescita del sistema senza rimontaggi dei client o ribilanciamenti invasivi. Il servizio metadati si scala separatamente dai server dati, quindi puoi espandere le dimensioni dello spazio dei nomi e le prestazioni dei metadati in base al carico di lavoro. Novus è progettato per eseguire ogni nodo di storage alla massima velocità e per gestire i guasti dei componenti come eventi di routine e non invasivi anche su larga scala. L'obiettivo principale è mantenere il flusso di dati verso il calcolo anche quando il sistema raggiunge dimensioni molto elevate.
+
+I client utilizzano un client NFS, il che rende Novus facile da adattare a cluster di GPU e di calcolo di grandi dimensioni. Inoltre, Novus è multi-tenant, quindi una singola implementazione può ospitare diversi clienti o carichi di lavoro isolati, ciascuno con il proprio namespace separato. Si basa inoltre sulla comprovata gestione e protezione dei dati di ONTAP. Per i clienti, questo significa storage in grado di mantenere occupate le GPU, ridurre i costi dell'infrastruttura ottenendo più prestazioni da ciascun nodo e supportare set di dati molto grandi in un singolo namespace.
+
+Novus può aiutare le organizzazioni che eseguono AI e altri carichi di lavoro a elevata intensità di dati su larga scala. Questo in genere include neocloud, provider di GPU-as-a-service, cloud sovrani, hyperscaler, nonché grandi imprese e organizzazioni di ricerca che eseguono training e inferenza dell'AI. Novus può offrire vantaggi a qualsiasi cliente che utilizza il calcolo ad alte prestazioni o l'elaborazione multimediale e ha bisogno di più terabyte al secondo di throughput, oltre a voler scalare lo storage insieme alle proprie risorse di calcolo.
+
+
+
+[[system-design-principles]]
+== Principi di progettazione del sistema
+
+Novus è stato progettato e realizzato sulla base di diversi principi fondamentali. Queste scelte architetturali di base ne determinano le prestazioni, la scalabilità e la resilienza. Questo aiuta i clienti che hanno bisogno di storage dalle performance elevate, che mantenga la GPU occupata e riduca i costi dell'infrastruttura.
+
+Storage pronto per l'exascale:: Novus è progettato per essere uno stack di base storage software-defined pronto per l'exascale. Combina server di metadati pNFS con scalabilità orizzontale con server dati separati e disaggregati.
+Throughput oltre i limiti tradizionali del cluster ONTAP:: Tradizionalmente, un singolo cluster ONTAP raggiunge un limite massimo di throughput fisso, determinato dal numero di controller e dalla larghezza di banda di interconnessione. L'addestramento e l'inferenza dell'IA richiedono un throughput che un singolo cluster ONTAP non è in grado di raggiungere.
+Aumenta la scalabilità aggiungendo cluster:: Novus unisce molti cluster ONTAP indipendenti, ciascuno piccolo fino a una sola coppia HA, in un unico namespace. Ogni nuovo cluster contribuisce con la sua intera larghezza di banda, quindi il throughput totale cresce linearmente. I client non devono eseguire di nuovo il mount e la flotta non richiede il ribilanciamento.
+Metadati con scalabilità separata:: Il livello del servizio di metadati e l'archivio di metadati partizionato possono crescere ciascuno da una a oltre 1.000 istanze. La capacità dei metadati e la frequenza delle richieste non dipendono dal numero di nodi dati utilizzati.
+Nodi dati a velocità di linea:: Ogni nodo dati dovrebbe funzionare alla massima velocità della scheda di rete per le operazioni di lettura e alla massima velocità NVMe per le operazioni di scrittura. Qualsiasi throughput per nodo inutilizzato si traduce semplicemente in hardware e costi aggiuntivi.
+La resilienza come principale vincolo di progettazione:: Su una scala di 1.000 o più nodi storage, i guasti non sono rari. La resilienza è un vincolo di progettazione primario, non qualcosa a cui pensare solo in fase operativa.
+
+
+
+
+[[network-file-system-nfs-implementation]]
+== Implementazione di Network File System (NFS)
+
+Novus è un'implementazione software-defined del protocollo Network File System (NFS). Si basa su NFSv4, in particolare sull'estensione Parallel NFS (pNFS), per separare il percorso dei metadati da quello dei dati. Puoi utilizzare client NFS standard per accedere a Novus Data Director (NDD) tramite NFSv4, accedendo al contempo direttamente ai dati sui server dati ONTAP tramite NFSv3.
+
+
+
+[[parallel-network-file-system-pnfs]]
+=== File system di rete parallelo (pNFS)
+
+Parallel NFS (pNFS) è una funzionalità introdotta con NFSv4.1 che separa la gestione dei metadati dei file dall'accesso ai dati dei file. Il server NFS gestisce le operazioni sui metadati e fornisce ai client informazioni su dove sono archiviati i dati dei file. I client possono quindi accedere direttamente ai dati sui dispositivi di storage dedicati e sui server dati, anziché inviare tutte le operazioni di lettura e scrittura attraverso un unico server.
+
+Il server NFS fornisce un layout che descrive come sono organizzati i dati di ciascun file e come il client può accedervi. A seconda del layout e della configurazione dello storage, un client può comunicare in parallelo con uno o più server di dati. Ciò aumenta le prestazioni di trasferimento dei dati e riduce il carico di gestione dei dati sul server dei metadati.
+
+pNFS supporta diversi tipi di layout, tra cui file, blocco, oggetto e file flessibile. Ogni tipo descrive un modo diverso di mappare i dati del file allo storage sottostante e il modo corrispondente in cui i client vi accedono. Novus utilizza il layout a file flessibile.
+
+Il layout di file flessibile di pNFS è una delle opzioni di layout più recenti. Offre un layout flessibile basato su file che può descrivere i dati archiviati su più server dati e può anche supportare copie mirror. Il client utilizza le informazioni di layout per selezionare un percorso del server dati appropriato per l'accesso. Ciò consente alle implementazioni di adattare il posizionamento dei dati e il comportamento di accesso alla configurazione dello storage e ai requisiti del carico di lavoro.
+
+
+
+[[major-components]]
+=== Componenti principali
+
+Esistono due componenti principali di Novus che si basano sullo standard pNFS e sull'esperienza di NetApp nello storage enterprise.
+
+server dati ONTAP:: Il server dati ONTAP implementa il data plane Novus. Archivia i dati dei file e li rende disponibili ai client NFS. Un namespace Novus può distribuire i propri dati dei file su diversi cluster ONTAP e un singolo cluster ONTAP può gestire molti namespace.
+Novus Data Director (NDD):: Il Novus Data Director fornisce il piano dei metadati di Novus. Gestisce i metadati dello spazio dei nomi, gestisce le richieste dei client per le operazioni sui metadati e fornisce ai client layout che descrivono dove sono archiviati i dati dei file nei cluster ONTAP. I client interagiscono con NDD usando NFSv4.2 con pNFS, mentre accedono direttamente da ONTAP ai dati effettivi dei file.
+
+
+Consulta link:../get-started/novus-architecture.html["Architettura Novus"] per ulteriori dettagli su questi componenti e su come funzionano insieme.
+
+
+
+[[additional-technology-and-concepts]]
+== Tecnologie e concetti aggiuntivi
+
+Esistono diversi concetti aggiuntivi rilevanti per Novus e per la tecnologia sottostante.
+
+Spazio dei nomi:: Un namespace è una struttura logica che organizza e identifica le risorse, consentendo di farvi riferimento in modo coerente all'interno di un ambito definito. Con NFSv4, il namespace è la gerarchia di file e directory presentata ai client; fornisce una vista unificata dei file system esportati, che i client possono esplorare utilizzando i percorsi. Ogni namespace NDD ha una propria istanza del server dei metadati.
+Federazione:: La federazione è una tecnica per connettere sistemi indipendenti in modo che possano collaborare pur mantenendo una gestione separata; può essere applicata a identità, servizi applicativi, reti, database e altre risorse. Se utilizzata con i provider di dati, la federazione consente a utenti o applicazioni di accedere ai dati provenienti da più fonti tramite un'interfaccia unificata, mentre i provider mantengono il controllo dei propri dati, favorendo l'interoperabilità e riducendo la necessità di centralizzare o duplicare le informazioni.
+Frammentazione:: Lo sharding è una tecnica per suddividere i dati di un database su più server, in cui ogni server memorizza ed eroga una porzione dei dati. Migliora la capacità e le prestazioni distribuendo lo storage e il carico delle query.
+Border Gateway Protocol:: Il Border Gateway Protocol (BGP) è il protocollo di routing che scambia informazioni di raggiungibilità tra sistemi autonomi, ovvero le reti che compongono Internet, e seleziona i percorsi utilizzando politiche e attributi di routing. Novus si affida a BGP per supportare la sua architettura multi-tenant.
+Archivio di metadati distribuito e scalabile:: Un archivio di metadati distribuito e scalabile è il sistema che gestisce i metadati su più nodi, garantendo elevata disponibilità, tolleranza ai guasti e accesso efficiente. In Novus, il Novus Data Director (NDD) implementa un archivio di metadati distribuito e scalabile (o semplicemente _archivio di metadati_) per gestire i metadati dello spazio dei nomi e fornire ai client layout per accedere ai dati dei file.
+
+
+
+
+[[related-information]]
+== Informazioni correlate
+
+* https://www.rfc-editor.org/info/rfc8435/["RFC 8435: Layout di file flessibile di Parallel NFS (pNFS)"^]
+* https://www.rfc-editor.org/info/rfc8178/["RFC 8178: Regole per le estensioni e le versioni minori di NFSv4"^]
+* https://www.rfc-editor.org/info/rfc8881/["RFC 8881: Protocollo Network File System (NFS) versione 4, versione secondaria 1"^]
+* https://www.rfc-editor.org/info/rfc7862/["RFC 7862: Protocollo Network File System (NFS) versione 4, versione minore 2"^]
+

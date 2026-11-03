@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blocks>
+  <block id="0cfc0df31483f98b0c522ea552176434" category="summary">Questa sezione FAQ fornisce risposte alle domande che potresti avere sul tuo sistema storage Novus. Include anche concetti e terminologia che possono esserti utili per esplorare il prodotto più nel dettaglio.</block>
+  <block id="32ec884504c435e0e52ff73dc41e50c9" category="doc">Domande frequenti sui sistemi di storage Novus</block>
+  <block id="f23592cfe157925dc8982e3f7697d68a" category="paragraph-title">Quali protocolli supporta NetApp Novus?</block>
+  <block id="c99c8844776a3f728f10c4ff862fec99" category="paragraph">Novus supporta i seguenti protocolli:</block>
+  <block id="670181787cd4f84290dbf71e55ed0d32" category="list-text">pNFS con NFS v4.2 (necessario per il layout di file flessibile di pNFS)</block>
+  <block id="3f91a2c4d8ba66304e817a6c1c8d8086" category="list-text">NFS su RDMA</block>
+  <block id="a4cf6d511a4b9e5f03a1ce0e60ec26a9" category="list-text">NVIDIA GPUDirect</block>
+  <block id="4051c2ab9f38c1f847cebe04cd34176e" category="paragraph-title">Novus supporta il layout di file flessibile pNFS?</block>
+  <block id="6f6de87f758984d4d08925c6289fa983" category="paragraph">Sì, il layout di file flessibile pNFS è supportato. Per il layout di file flessibile con wide striping, ti serve un client NFS in una distribuzione Linux supportata. A ottobre 2026, solo il client NFS fornito con Ubuntu 26.04 supporta il wide striping.</block>
+  <block id="f4486b27b5e351620bc976902fb3eee1" category="paragraph-title">Novus richiede un client del file system personalizzato?</block>
+  <block id="b55ddf3070e6aee507d4a6a0255796f8" category="paragraph">No. Novus funziona con i client NFS standard.</block>
+  <block id="25c51cabb1f47ae72c3339204d569970" category="paragraph-title">Novus supporta il multitenancy?</block>
+  <block id="fffe10d716263a47a522f96ac514d6d8" category="paragraph">Sì, Novus offre il multi-tenant sicuro tramite:</block>
+  <block id="b0b170682a0c504c4acf4028b208ce51" category="list-text">Isolamento del namespace a livello dei metadati</block>
+  <block id="0e9704b02270e0333667fa7006c2958f" category="list-text">Isolamento di rete tramite sottorete/VLAN</block>
+  <block id="25fdaad3da4c767cd425b32cb001c636" category="list-text">Pool di nodi: Novus Data Director dedicato, namespace e KVS</block>
+  <block id="e80fdbeed6434a55cbf57b9e1b0c298e" category="list-text">Provider di identità e gestione delle chiavi di crittografia per tenant</block>
+  <block id="ff81abac1f3b6718072116e5cff90a4b" category="list-text">Server dati dedicati per i tenant</block>
+  <block id="233798820adbeaf0195dbaceeeb6d29a" category="paragraph-title">Qual è la capacità di storage massima per un cluster Novus?</block>
+  <block id="6ff051e4bbb7af6eb5ea37f6d246a729" category="paragraph">La versione iniziale di Novus supporta fino a 600 coppie HA AFF A90 (sistemi). Il limite totale di storage per un cluster dipende dalle dimensioni delle unità utilizzate.</block>
+  <block id="4a18895b0107bfce7384fff1ad977c03" category="paragraph-title">Come vengono partizionati e protetti i metadati nei Novus Data Directors?</block>
+  <block id="8a6609496f78e11d36cd0e77a703e0fb" category="paragraph">I metadati sono suddivisi tra gruppi di nodi e replicati tre volte all'interno di ciascun gruppo di nodi. Un gruppo di nodi è composto da tre Data Directors, motivo per cui il livello dei metadati viene sempre espanso in multipli di tre. La suddivisione avviene per intervallo di chiavi: ad esempio, un gruppo di nodi contiene le chiavi dalla A alla N e un altro quelle dalla M alla Z, quindi, man mano che vengono aggiunti gruppi di nodi, le tabelle dei metadati vengono partizionate sull'insieme più ampio.</block>
+  <block id="f8bceaee291b9ec78ca55a2641d76b9d" category="paragraph-title">Puoi riutilizzare un cluster ONTAP AFF A90 esistente e usarlo per Novus?</block>
+  <block id="097d0248cd331de8062669401368ed87" category="paragraph">No. I controller ONTAP esistenti non possono essere riconvertiti né aggiornati per essere utilizzati per un'implementazione di Novus. Devi acquistare un nuovo AFF A90 per NetApp Novus.</block>
+  <block id="2669b9f89cb83040a074375a68bdf64b" category="summary">Un sistema storage Novus può essere implementato in diverse configurazioni a seconda delle tue esigenze di prestazioni e capacità. Ecco un semplice esempio di implementazione.</block>
+  <block id="73035894d61f113f345567102bfc18b0" category="doc">Esempio di implementazione di un sistema storage Novus</block>
+  <block id="5ba1abc9e3c80faee7087878221b6b1b" category="paragraph">Un sistema storage Novus può essere implementato in diverse configurazioni a seconda delle tue esigenze di prestazioni e capacità. Ecco un semplice esempio con due figure.</block>
+  <block id="4cc4075604529a747e3dfdfb88328789" category="section-title">Connettività del cluster di storage</block>
+  <block id="55e90b5559b8c82d92e8c26030f37095" category="paragraph">La figura seguente illustra la tipica connettività di rete del sistema storage necessaria per un'implementazione Novus.</block>
+  <block id="992248864426ba7b9185d34a6637ae2e" category="inline-image-macro">Implementazione Novus 1</block>
+  <block id="9760133cf6b0a9e315c42b3790586fd7" category="paragraph"><block ref="9760133cf6b0a9e315c42b3790586fd7" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="c2125589d390394e242469a75e76850e" category="section-title">Architettura di rete per lo storage dalle performance elevate</block>
+  <block id="7bf83157515ebed19ee6f28eaec78ced" category="paragraph">Le implementazioni con 1024 GPU richiedono un totale di tre sistemi storage Novus AFF A90 di NetApp e tre server Novus Data Director (NDD) per soddisfare i requisiti di prestazioni standard delle GPU di ultima generazione. La figura seguente illustra questa configurazione insieme alla relativa architettura di rete HPS per un sistema di queste dimensioni.</block>
+  <block id="8997a29a6b890194fcf5f05fbaff590a" category="inline-image-macro">Implementazione Novus 2</block>
+  <block id="069844d5e0546fac6ef6bb5af6493831" category="paragraph"><block ref="069844d5e0546fac6ef6bb5af6493831" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="a084a68e59454f6f722f19c9fceacd65" category="summary">NetApp Novus è un nuovo e potente sistema storage progettato per le esigenze dell'intelligenza artificiale su scala molto ampia. Estende l'esperienza di NetApp nello storage enterprise all'infrastruttura dalle performance elevate necessaria per l'addestramento e l'inferenza. Comprendere la sua struttura amministrativa e le opzioni di configurazione è fondamentale per una gestione efficace e prestazioni ottimali.</block>
+  <block id="84e390f3d8c550024430346187897ee5" category="doc">Scopri i sistemi di storage Novus</block>
+  <block id="1dc296778ef9129dd622258befb38f28" category="paragraph">NetApp Novus è un potente sistema storage progettato per le esigenze dell'intelligenza artificiale su scala molto ampia. Estende l'esperienza di NetApp nello storage enterprise all'infrastruttura dalle performance estremamente elevate necessaria per l'addestramento e l'inferenza. Comprendere la sua struttura amministrativa e le opzioni di configurazione è fondamentale per una gestione efficace e prestazioni ottimali.</block>
+  <block id="3b878279a04dc47d60932cb294d96259" category="section-title">Panoramica</block>
+  <block id="cce4a64880bdef067589ead78cd97183" category="paragraph">NetApp Novus è una soluzione di file storage scale-out progettata per il throughput e la scalabilità necessari per i moderni carichi di lavoro AI. Unisce molti cluster storage ONTAP indipendenti in un unico namespace che i client vedono come un unico file system. Novus si basa su NFS parallelo (pNFS), che separa i metadati dai dati dei file. Un servizio di metadati dedicato gestisce il namespace, mentre i cluster storage forniscono i dati dei file direttamente ai client in parallelo. Questo elimina il limite di throughput di un singolo cluster, che non limita più la velocità con cui il sistema può fornire i dati.</block>
+  <block id="e3f903305d24aea914ebcfd39d4a704d" category="paragraph">Un'implementazione Novus può crescere semplicemente aggiungendo cluster di storage. Ogni nuovo cluster aggiunge tutta la sua larghezza di banda e capacità allo spazio dei nomi, quindi il throughput aumenta con la crescita del sistema senza rimontaggi dei client o ribilanciamenti invasivi. Il servizio metadati si scala separatamente dai server dati, quindi puoi espandere le dimensioni dello spazio dei nomi e le prestazioni dei metadati in base al carico di lavoro. Novus è progettato per eseguire ogni nodo di storage alla massima velocità e per gestire i guasti dei componenti come eventi di routine e non invasivi anche su larga scala. L'obiettivo principale è mantenere il flusso di dati verso il calcolo anche quando il sistema raggiunge dimensioni molto elevate.</block>
+  <block id="a56b3bb96bc48a5b57bbf054086c6c51" category="paragraph">I client utilizzano un client NFS, il che rende Novus facile da adattare a cluster di GPU e di calcolo di grandi dimensioni. Inoltre, Novus è multi-tenant, quindi una singola implementazione può ospitare diversi clienti o carichi di lavoro isolati, ciascuno con il proprio namespace separato. Si basa inoltre sulla comprovata gestione e protezione dei dati di ONTAP. Per i clienti, questo significa storage in grado di mantenere occupate le GPU, ridurre i costi dell'infrastruttura ottenendo più prestazioni da ciascun nodo e supportare set di dati molto grandi in un singolo namespace.</block>
+  <block id="fb2463bfe2dcaa5ca6651a285822fb0c" category="paragraph">Novus può aiutare le organizzazioni che eseguono AI e altri carichi di lavoro a elevata intensità di dati su larga scala. Questo in genere include neocloud, provider di GPU-as-a-service, cloud sovrani, hyperscaler, nonché grandi imprese e organizzazioni di ricerca che eseguono training e inferenza dell'AI. Novus può offrire vantaggi a qualsiasi cliente che utilizza il calcolo ad alte prestazioni o l'elaborazione multimediale e ha bisogno di più terabyte al secondo di throughput, oltre a voler scalare lo storage insieme alle proprie risorse di calcolo.</block>
+  <block id="396f0fa55d99dd1070a3f9192253ba11" category="section-title">Principi di progettazione del sistema</block>
+  <block id="c1bf9bbb5761f10e614af8b39c0eaa7e" category="paragraph">Novus è stato progettato e realizzato sulla base di diversi principi fondamentali. Queste scelte architetturali di base ne determinano le prestazioni, la scalabilità e la resilienza. Questo aiuta i clienti che hanno bisogno di storage dalle performance elevate, che mantenga la GPU occupata e riduca i costi dell'infrastruttura.</block>
+  <block id="d8ae7fa000beb8aa5e4a17e722c3bc25" category="list-text">Storage pronto per l'exascale</block>
+  <block id="e77c2f9d751a63ceb1dbb8301f04bfe6" category="list-text">Novus è progettato per essere uno stack di base storage software-defined pronto per l'exascale. Combina server di metadati pNFS con scalabilità orizzontale con server dati separati e disaggregati.</block>
+  <block id="b72dba02dd916467665190bb29cfd2f2" category="list-text">Throughput oltre i limiti tradizionali del cluster ONTAP</block>
+  <block id="0034f2ac15fb7ab94633f497ee1f43c6" category="list-text">Tradizionalmente, un singolo cluster ONTAP raggiunge un limite massimo di throughput fisso, determinato dal numero di controller e dalla larghezza di banda di interconnessione. L'addestramento e l'inferenza dell'IA richiedono un throughput che un singolo cluster ONTAP non è in grado di raggiungere.</block>
+  <block id="cdea4f3a2d5ff68f9d4db2936937cea0" category="list-text">Aumenta la scalabilità aggiungendo cluster</block>
+  <block id="51758880280429d6a30d78f0e32a426a" category="list-text">Novus unisce molti cluster ONTAP indipendenti, ciascuno piccolo fino a una sola coppia HA, in un unico namespace. Ogni nuovo cluster contribuisce con la sua intera larghezza di banda, quindi il throughput totale cresce linearmente. I client non devono eseguire di nuovo il mount e la flotta non richiede il ribilanciamento.</block>
+  <block id="0755e8892a9b71a403544266cd67100b" category="list-text">Metadati con scalabilità separata</block>
+  <block id="9c0e1e07c28a07813a67f10d831d48ea" category="list-text">Il livello del servizio di metadati e l'archivio di metadati partizionato possono crescere ciascuno da una a oltre 1.000 istanze. La capacità dei metadati e la frequenza delle richieste non dipendono dal numero di nodi dati utilizzati.</block>
+  <block id="9bbaa57b5622a2e30d1e3ded14d75578" category="list-text">Nodi dati a velocità di linea</block>
+  <block id="64afce942600ea951f92f2e2a3367a12" category="list-text">Ogni nodo dati dovrebbe funzionare alla massima velocità della scheda di rete per le operazioni di lettura e alla massima velocità NVMe per le operazioni di scrittura. Qualsiasi throughput per nodo inutilizzato si traduce semplicemente in hardware e costi aggiuntivi.</block>
+  <block id="15f7ab55207219b0744b7800cf3bce74" category="list-text">La resilienza come principale vincolo di progettazione</block>
+  <block id="fa985af1482c7f5b083eb335b36cea6d" category="list-text">Su una scala di 1.000 o più nodi storage, i guasti non sono rari. La resilienza è un vincolo di progettazione primario, non qualcosa a cui pensare solo in fase operativa.</block>
+  <block id="7a82daa63e66d18705842b20ebe6e16c" category="section-title">Implementazione di Network File System (NFS)</block>
+  <block id="0762a6cd974851da9de3df7c27f5e3d9" category="paragraph">Novus è un'implementazione software-defined del protocollo Network File System (NFS). Si basa su NFSv4, in particolare sull'estensione Parallel NFS (pNFS), per separare il percorso dei metadati da quello dei dati. Puoi utilizzare client NFS standard per accedere a Novus Data Director (NDD) tramite NFSv4, accedendo al contempo direttamente ai dati sui server dati ONTAP tramite NFSv3.</block>
+  <block id="edc3b0f9843bf446907c74443f558452" category="section-title">File system di rete parallelo (pNFS)</block>
+  <block id="7346528094de8a2516e88943d7ddf75a" category="paragraph">Parallel NFS (pNFS) è una funzionalità introdotta con NFSv4.1 che separa la gestione dei metadati dei file dall'accesso ai dati dei file. Il server NFS gestisce le operazioni sui metadati e fornisce ai client informazioni su dove sono archiviati i dati dei file. I client possono quindi accedere direttamente ai dati sui dispositivi di storage dedicati e sui server dati, anziché inviare tutte le operazioni di lettura e scrittura attraverso un unico server.</block>
+  <block id="ff563330f23b190889f5960de8b3c51e" category="paragraph">Il server NFS fornisce un layout che descrive come sono organizzati i dati di ciascun file e come il client può accedervi. A seconda del layout e della configurazione dello storage, un client può comunicare in parallelo con uno o più server di dati. Ciò aumenta le prestazioni di trasferimento dei dati e riduce il carico di gestione dei dati sul server dei metadati.</block>
+  <block id="22134934a79f3bf7daa0edf44ee1518f" category="paragraph">pNFS supporta diversi tipi di layout, tra cui file, blocco, oggetto e file flessibile. Ogni tipo descrive un modo diverso di mappare i dati del file allo storage sottostante e il modo corrispondente in cui i client vi accedono. Novus utilizza il layout a file flessibile.</block>
+  <block id="f9351340d3e59272c0a88862c39c3c1e" category="paragraph">Il layout di file flessibile di pNFS è una delle opzioni di layout più recenti. Offre un layout flessibile basato su file che può descrivere i dati archiviati su più server dati e può anche supportare copie mirror. Il client utilizza le informazioni di layout per selezionare un percorso del server dati appropriato per l'accesso. Ciò consente alle implementazioni di adattare il posizionamento dei dati e il comportamento di accesso alla configurazione dello storage e ai requisiti del carico di lavoro.</block>
+  <block id="4e5ab91395a55ff39c56f0429860b71b" category="section-title">Componenti principali</block>
+  <block id="71ea50f58624c9a8e3bb006b7f6c99de" category="paragraph">Esistono due componenti principali di Novus che si basano sullo standard pNFS e sull'esperienza di NetApp nello storage enterprise.</block>
+  <block id="18f20de9fe1eedaeaa192ebc886ac54f" category="list-text">server dati ONTAP</block>
+  <block id="433c37725f317b7540178f2e865fc6ac" category="list-text">Il server dati ONTAP implementa il data plane Novus. Archivia i dati dei file e li rende disponibili ai client NFS. Un namespace Novus può distribuire i propri dati dei file su diversi cluster ONTAP e un singolo cluster ONTAP può gestire molti namespace.</block>
+  <block id="eaaa04e22c2ab5544674a11758faf0e8" category="list-text">Novus Data Director (NDD)</block>
+  <block id="917e1cead3bddb81bd3b50ab3ff55b15" category="list-text">Il Novus Data Director fornisce il piano dei metadati di Novus. Gestisce i metadati dello spazio dei nomi, gestisce le richieste dei client per le operazioni sui metadati e fornisce ai client layout che descrivono dove sono archiviati i dati dei file nei cluster ONTAP. I client interagiscono con NDD usando NFSv4.2 con pNFS, mentre accedono direttamente da ONTAP ai dati effettivi dei file.</block>
+  <block id="7801aabb25f022a608e31a0494f3bfb3" category="inline-link-macro">Architettura Novus</block>
+  <block id="2a860046fc9aa89fec212c1a00c5376c" category="paragraph">Consulta <block ref="bca9bed85f55b2a9966229f89c3a23ff" category="inline-link-macro-rx"></block> per ulteriori dettagli su questi componenti e su come funzionano insieme.</block>
+  <block id="ec278262dc4750d3ab885db3e6b53fad" category="section-title">Tecnologie e concetti aggiuntivi</block>
+  <block id="6e326bd7c7ea0b3a2171f0fca44b2e65" category="paragraph">Esistono diversi concetti aggiuntivi rilevanti per Novus e per la tecnologia sottostante.</block>
+  <block id="b3ba0fe968ce39dcfc6fe8cc0f1b02da" category="list-text">Spazio dei nomi</block>
+  <block id="f4b3a940c31d4e49db53b67e4b7344ee" category="list-text">Un namespace è una struttura logica che organizza e identifica le risorse, consentendo di farvi riferimento in modo coerente all'interno di un ambito definito. Con NFSv4, il namespace è la gerarchia di file e directory presentata ai client; fornisce una vista unificata dei file system esportati, che i client possono esplorare utilizzando i percorsi. Ogni namespace NDD ha una propria istanza del server dei metadati.</block>
+  <block id="43db2a9bc6b7310c67fd6873bb6ca7a4" category="list-text">Federazione</block>
+  <block id="567ba6bb9780d0358ad99faac6077fb5" category="list-text">La federazione è una tecnica per connettere sistemi indipendenti in modo che possano collaborare pur mantenendo una gestione separata; può essere applicata a identità, servizi applicativi, reti, database e altre risorse. Se utilizzata con i provider di dati, la federazione consente a utenti o applicazioni di accedere ai dati provenienti da più fonti tramite un'interfaccia unificata, mentre i provider mantengono il controllo dei propri dati, favorendo l'interoperabilità e riducendo la necessità di centralizzare o duplicare le informazioni.</block>
+  <block id="2b3ea8c2ac323f736480d2b3a6baf7e4" category="list-text">Frammentazione</block>
+  <block id="6ec2bc21327628241a0cedbb4621f180" category="list-text">Lo sharding è una tecnica per suddividere i dati di un database su più server, in cui ogni server memorizza ed eroga una porzione dei dati. Migliora la capacità e le prestazioni distribuendo lo storage e il carico delle query.</block>
+  <block id="6cb99182f716fc822a12edd05ffd39bb" category="list-text">Border Gateway Protocol</block>
+  <block id="7e088054248020b7b3af81d7f540a163" category="list-text">Il Border Gateway Protocol (BGP) è il protocollo di routing che scambia informazioni di raggiungibilità tra sistemi autonomi, ovvero le reti che compongono Internet, e seleziona i percorsi utilizzando politiche e attributi di routing. Novus si affida a BGP per supportare la sua architettura multi-tenant.</block>
+  <block id="97918895159c1e7defef81180b7fa3db" category="list-text">Archivio di metadati distribuito e scalabile</block>
+  <block id="afd17178e34e0b5ac01eae548ddb1b3c" category="list-text">Un archivio di metadati distribuito e scalabile è il sistema che gestisce i metadati su più nodi, garantendo elevata disponibilità, tolleranza ai guasti e accesso efficiente. In Novus, il Novus Data Director (NDD) implementa un archivio di metadati distribuito e scalabile (o semplicemente _archivio di metadati_) per gestire i metadati dello spazio dei nomi e fornire ai client layout per accedere ai dati dei file.</block>
+  <block id="30f60d67f457bb040dffde52197a54da" category="section-title">Informazioni correlate</block>
+  <block id="e3e20b328871eb15b0f991c9d9b602e5" category="inline-link">RFC 8435: Layout di file flessibile di Parallel NFS (pNFS)</block>
+  <block id="683cfca95420311b20eaf301b6c39149" category="list-text"><block ref="683cfca95420311b20eaf301b6c39149" category="inline-link-rx"></block></block>
+  <block id="1d343564cb9e2afdcf80e6f98eb4e07d" category="inline-link">RFC 8178: Regole per le estensioni e le versioni minori di NFSv4</block>
+  <block id="5a401aaebd2a0cb7932efa2845408068" category="list-text"><block ref="5a401aaebd2a0cb7932efa2845408068" category="inline-link-rx"></block></block>
+  <block id="26c39d0adfa36a44f9946d08971693be" category="inline-link">RFC 8881: Protocollo Network File System (NFS) versione 4, versione secondaria 1</block>
+  <block id="d8023d4877c353d5e7fd12805bd4423c" category="list-text"><block ref="d8023d4877c353d5e7fd12805bd4423c" category="inline-link-rx"></block></block>
+  <block id="224d0fd2fc3764f64d513cd83eba38c7" category="inline-link">RFC 7862: Protocollo Network File System (NFS) versione 4, versione minore 2</block>
+  <block id="1845814b98136a2d15254aa757e22815" category="list-text"><block ref="1845814b98136a2d15254aa757e22815" category="inline-link-rx"></block></block>
+  <block id="57cf9865afb74c46569ca25524642533" category="summary">L'architettura Novus è composta da istanze di Novus Data Director (NDD) e server dati ONTAP. I server dati ONTAP supportano il percorso dei dati, mentre NDD gestisce i metadati e l'accesso dei client tramite Parallel NFS (pNFS).</block>
+  <block id="6398e7f4abf482b17972a25f35f3c004" category="doc">Architettura del sistema storage Novus</block>
+  <block id="5dac09461534086ea3d9d6360aa1c860" category="paragraph">I server dati sono cluster ONTAP creati appositamente per Novus. Implementano il data plane di Novus, memorizzano i dati dei file e li servono ai client NFS. Uno spazio dei nomi Novus può distribuire i propri dati dei file su diversi cluster ONTAP; un singolo cluster può servire molti spazi dei nomi diversi. Questa flessibilità consente di aumentare capacità e prestazioni aggiungendo server dati in base alle necessità.</block>
+  <block id="abe3373cc8ef939fbfdc6949f08b6f76" category="paragraph">I client accedono ai server dati ONTAP utilizzando un client NFS standard, senza bisogno di software NetApp personalizzato. Dopo che un client ottiene un layout di file da Novus Data Director, può leggere e scrivere i dati del file direttamente sui server dati ONTAP tramite NFSv3 e, facoltativamente, tramite RDMA. I dati in blocco non passano mai attraverso Novus Data Director, quindi il traffico dati viaggia in parallelo tra i server dati.</block>
+  <block id="b3dc264a33bb985fc505f1536d237b49" category="paragraph">I server dati non partecipano alla gestione dello spazio dei nomi. Memorizzano i dati di ciascun file come file di supporto nei volumi ONTAP. Un server dati ONTAP non gestisce i metadati del namespace Novus, come la struttura delle directory o il modo in cui i file vengono distribuiti tra i server dati.</block>
+  <block id="262b8b361e8ef950b3378b9b626c2fe4" category="paragraph">L'AFF A90 per NetApp Novus è una versione di AFF A90 progettata per Novus che esegue ONTAP. Le sue caratteristiche includono:</block>
+  <block id="29734b1e97e6a7d798ed948f394323f9" category="list-text">Schede NVRAM doppie aggiuntive</block>
+  <block id="ab708d2d36bd733efdff9bf0fb28993c" category="list-text">schede di rete ad alta larghezza di banda</block>
+  <block id="6896d1515a3999ac7d31ca541034f0ed" category="list-text">Configurato come una coppia HA ONTAP standard</block>
+  <block id="1d5c345e7e7e24044b3f31805362cf7c" category="list-text">Protegge i dati con RAID-DP o RAID-TEC.</block>
+  <block id="7757e4ace5e1553410d74316b62ef89d" category="paragraph">I cluster ONTAP standard non possono essere utilizzati come server dati Novus; sono supportate solo le piattaforme create appositamente per Novus.</block>
+  <block id="4227331a109e4a12d9454a0e24ef8832" category="section-title">Novus Data Director</block>
+  <block id="844b1e067078fa01806c6815dcc1e5c4" category="paragraph">Il Novus Data Director (NDD) è un'implementazione del ruolo di server di metadati (MDS) nell'architettura pNFS e fornisce il piano dei metadati di Novus. Un _host MDS_ è un server fisico che esegue Linux, oltre ai servizi del protocollo MDS e agli archivi dei metadati.</block>
+  <block id="add452f0041bbcae103c39466f9361aa" category="paragraph">L'NDD presenta ogni namespace ai client come un singolo file system. Gestisce i metadati del namespace: file e directory, attributi dei file, la mappa di dove sono archiviati i dati di ciascun file e lo stato del protocollo necessario per coordinare l'accesso dei client. I client montano un namespace tramite il suo indirizzo IP virtuale e comunicano con l'NDD utilizzando NFSv4.2 con parallel NFS (pNFS). L'NDD gestisce tutte le operazioni sui metadati, come ricerche, creazione di file e modifiche degli attributi. Quando un client apre un file, l'NDD gli fornisce un layout pNFS Flexible File, che indica al client quali server dati contengono i dati del file. Il client può quindi eseguire le operazioni di lettura e scrittura direttamente con i server dati ONTAP; l'NDD si trova nel percorso dei metadati, ma non nel percorso dei dati.</block>
+  <block id="340d58c1959c2c949a557cd805569263" category="paragraph">L'NDD è implementato come software che viene eseguito su un cluster di almeno tre server dedicati. Combina i processi del server dei metadati con un database replicato e distribuito che archivia i metadati del namespace su storage locale crittografato. Ogni namespace esegue i propri processi del server dei metadati su diversi di questi server. Tutti i server integri annunciano l'indirizzo IP virtuale del namespace, distribuendo il carico dei client e permettendo ai client di eseguire il failover senza dover rimontare. Poiché i metadati autorevoli risiedono nel database replicato, un server può guastarsi e riavviarsi senza perdere lo stato del namespace.</block>
+  <block id="19d2081a074b45ead1a875d093f20e08" category="paragraph">Il posizionamento dei dati sui cluster ONTAP è controllato dall'NDD. Tiene un registro dei server dati, garantisce che ogni server dati sia disponibile usando probe NFS leggere e tiene traccia della capacità libera su ciascuno. Quando viene creato un file, l'NDD sceglie i server dati, crea i file di supporto tramite NFS e ne registra le posizioni. Se un server dati diventa indisponibile, l'NDD smette di collocarvi nuovi dati e richiama i layout client che vi puntano.</block>
+  <block id="15a576377533d9c92e21e7779b573599" category="section-title">Implementazione di Novus</block>
+  <block id="969436d3093ede333ae168004b0595f3" category="paragraph">La figura seguente illustra a grandi linee una tipica implementazione di Novus. Tra gli aspetti più rilevanti ci sono un singolo namespace con più Novus Data Directors e nodi del server dati ONTAP. Questa architettura garantisce elevata disponibilità e bassa latenza a supporto dei server GPU di backend.</block>
+  <block id="4b7c1627fd35a8830d7d2c5a10b4d709" category="paragraph"><block ref="4b7c1627fd35a8830d7d2c5a10b4d709" category="inline-image-macro-rx" type="image"></block></block>
+  <block id="df24b5171a05e7d224bc6ffb72a52962" category="summary">Ci sono diversi aspetti importanti dell'ambiente Novus e del suo funzionamento che dovresti comprendere.</block>
+  <block id="067f30e2321a6b32de622bfdadefb425" category="doc">Ambiente ed elaborazione del sistema storage Novus</block>
+  <block id="4c3aa44c7ffe90542611736ad836a238" category="section-title">Comunicazione interna tra Novus Data Director e il server dati ONTAP</block>
+  <block id="b95aabb5777e63df44b17e9615fd17b1" category="paragraph">I Novus Data Directors comunicano con i server dati ONTAP per supportare l'accesso e la gestione dei file. Nella maggior parte dei casi, è l'NDD ad avviare queste operazioni, non i server ONTAP.</block>
+  <block id="fb317e403279651c17b57d9410a33108" category="section-title">Rilevamento del server dati ONTAP</block>
+  <block id="9dab92a6c10e53b458ff7b5acd4c11f2" category="paragraph">I Novus Data Directors devono individuare i server dati disponibili. ONTAP non avvia mai la comunicazione con il Novus Data Director. Un operatore o uno strumento registra ciascun server dati tramite il file di configurazione<block ref="83281a38646516af2d9a9d99dd333845" prefix=" " category="inline-code"></block>, che viene utilizzato all'avvio; i server dati possono anche essere aggiunti manualmente tramite il comando<block ref="aa7334da829d5d73f1695920695480b4" prefix=" " category="inline-code"></block>. Ogni server dati è rappresentato come una riga nell'archivio di metadati distribuito, che include host, export, porte, stato e capacità.</block>
+  <block id="f3d46806d1b2260acec6a3d19fa52b4e" category="section-title">Disponibilità del server dati ONTAP</block>
+  <block id="cfd19b34b2fb1b2d359ceef808816169" category="paragraph">Esistono diversi processi usati per determinare la disponibilità di ciascun server dati ONTAP.</block>
+  <block id="83622997d22f5f18b9b09bd364cb673e" category="list-text">Heartbeat</block>
+  <block id="83349a612b7d8312a451c8b34f381038" category="list-text">L'MDS invia una chiamata RPC NULL NFSv3 tramite TCP a ciascun server dati online. Per impostazione predefinita, lo fa ogni 5 secondi utilizzando un messaggio heartbeat.</block>
+  <block id="387cc1dc754d1c6aecd9985636e56d23" category="list-text">Andare offline</block>
+  <block id="9b88b83eefd57ec79e4b0812fec1989c" category="list-text">Dopo un certo numero di errori consecutivi, il server dati viene contrassegnato come offline. L'MDS smette di collocare nuovi file su di esso e informa i client di restituire i layout che puntano ad esso.</block>
+  <block id="4c9c10bd1e5d6ea2cc927c5cecafa351" category="list-text">Tornando indietro</block>
+  <block id="ac2be31b6dad5d8490b20119c10cfd48" category="list-text">Dopo un numero sufficiente di test consecutivi andati a buon fine, torna online. Un periodo di raffreddamento impedisce che passi continuamente da uno stato all'altro.</block>
+  <block id="4f09617a0d0425364705ca49fa432aad" category="list-text">Gli errori del client non contano</block>
+  <block id="22b4455a82198d391f20acfdba1f53f8" category="list-text">Quando un client segnala un errore, questo viene solo registrato. Lo stato di salute del server dati ONTAP è determinato esclusivamente dai probe.</block>
+  <block id="52b918d1f31e3257e61adbbb0e0a4829" category="list-text">Il failover di ONTAP è invisibile</block>
+  <block id="3ac5d75dd1f2aff51ad8c12b5e1a7ca2" category="list-text">Se una coppia HA ONTAP effettua un takeover, l'MDS lo rileva solo tramite timeout di rilevamento.</block>
+  <block id="9648cd08e415897e1c52a6de9f60258a" category="section-title">contenuto dei dati del server dati ONTAP</block>
+  <block id="317af1a9720679746bbbcd3a15f1294a" category="paragraph">L'NDD non chiede a ONTAP cosa memorizza. Lo sa già, perché crea ogni file di supporto:</block>
+  <block id="281180ff46a93cd63646c306eacb2458" category="list-text">Quando viene creato un file, l'MDS seleziona i server dati, crea i file di supporto su di essi e salva il risultato nella mappa delle stripe nell'archivio di metadati distribuito. La mappa delle stripe registra quale server dati e quale file handle NFS contengono ciascuna stripe e ciascun mirror.</block>
+  <block id="a5a6be3a47b0f8aac382254c456512e3" category="list-text">I file di supporto su ONTAP hanno un formato di denominazione specifico nell'NDD.</block>
+  <block id="6ac439a0281ff3d06c7d477b7df9431b" category="list-text">La capacità è l'unico valore operativo che NDD legge da ONTAP utilizzando statvfs() su ogni export montato.</block>
+  <block id="02199364ea1025a345eeeec8efa006c2" category="list-text">La dimensione del file non viene verificata rispetto a ONTAP. È determinata dal commit del layout del client.</block>
+  <block id="004238df02d138a0bc4de2239fbdb867" category="section-title">Elevata disponibilità e resilienza per il cluster NDD</block>
+  <block id="749d25be3bbe1e0288175d1788e12dd6" category="paragraph">Il piano dei metadati, gestito dai Novus Data Directors, garantisce elevata disponibilità e resilienza nel sistema.</block>
+  <block id="a09c4080507bf2aa1c48bb2dd627b314" category="section-title">Progettazione del cluster</block>
+  <block id="05bdc5e1d582231fc909c611fa904739" category="paragraph">Novus utilizza un cluster multi-host per garantire elevata disponibilità e tolleranza ai guasti per i servizi NDD.</block>
+  <block id="88f2ef300bed6a97a6996812cef84033" category="list-text">Tre host con tre domini di guasto</block>
+  <block id="8cd795e1895b6a7adc4592fa8c5e392a" category="list-text">Il cluster NDD minimo è composto da tre host fisici o macchine virtuali (VM) distribuiti su server separati. Ogni host esegue un processo MDS e un nodo di archiviazione dei metadati. Il cluster è progettato per sopravvivere alla perdita di un host.</block>
+  <block id="8328deeae9c1133a717dc0b9baf7ed18" category="list-text">Tutte le repliche servono</block>
+  <block id="2555e79124e86f65b8d423018c63d770" category="list-text">Ogni replica MDS gestisce i client contemporaneamente, senza che alcuna sia designata in modalità standby. Tutte le repliche integre annunciano lo stesso VIP tramite BGP. BFD (fast link-failure detection) è necessario perché i timer di BGP da soli non costituiscono un meccanismo di failover completamente accettabile. Una replica annuncia il VIP solo quando il suo servizio NFS, il gateway e la connessione all'archivio dei metadati sono tutti pronti per gestire i client.</block>
+  <block id="70fde657046d813243fa244d73767622" category="list-text">Replica dei metadati</block>
+  <block id="d5263a3c9c80994a957b90e265f45e4b" category="list-text">L'archivio distribuito dei metadati mantiene tre copie sincrone. Un arbitro impedisce uno scenario di split-brain scegliendo di diventare indisponibile anziché consentire a entrambe le parti di scrivere.</block>
+  <block id="1e9da5a08664f9f16e4ceed6d4875a28" category="list-text">I riavvii sono sicuri</block>
+  <block id="51c0c113611246c1174fa0d0d95c8bf3" category="list-text">I processi MDS non mantengono alcuno stato proprio; il repository distribuito dei metadati contiene i metadati autorevoli.</block>
+  <block id="eaf4c4ddc21bf0f1edade472e923a1f5" category="section-title">Limitazioni e precauzioni</block>
+  <block id="9a015298a58b38114a68c34e922c461d" category="paragraph">Dovresti inoltre tenere presenti le seguenti limitazioni e precauzioni:</block>
+  <block id="fa12fd5c6944884f351dfc30615a73a6" category="list-text">La proprietà dei sottoalberi non passa automaticamente in failover. Lo spazio dei nomi può essere suddiviso in sottoalberi, ognuno di proprietà di un MDS. Se un proprietario non è disponibile, il relativo sottoalbero rimane bloccato finché il proprietario non torna, anche se il VIP è già stato spostato.</block>
+  <block id="bfe5026f08754ffe2fa5eb9a3a586c67" category="list-text">Il guasto di un host influisce su tutti i tenant su quell'host, poiché ogni tenant dispone di una replica per host.</block>
+  <block id="a4b6c16dc63a1380be4a9c18f2a4894b" category="list-text">I client devono montare la VIP e non un IP host. In caso contrario, il client non può eseguire il failover.</block>
+  <block id="44b47d6016953ad319f4fc3107d7e699" category="list-text">I mount hard potrebbero bloccarsi durante il ripristino. Un mount bloccato non significa che i dati siano andati persi.</block>
+  <block id="10194deb5ecf48e83e20efe587cd3538" category="list-text">Esegui sempre la manutenzione di una replica alla volta. Rimuovi prima la replica dal VIP e svuotala.</block>
+  <block id="d70a32ab91e13d5405a25beff90b23f8" category="summary">Dovresti conoscere i requisiti di Novus, che generalmente si suddividono in tre categorie.</block>
+  <block id="d6bad7f9eb22c7c75e842e3350cc7a47" category="doc">Requisiti di Novus</block>
+  <block id="a104bb88e3775e12cef6be6b03a095d9" category="admonition">Per ulteriori informazioni, consulta anche i requisiti e le restrizioni del prodotto in NetApp Hardware Universe e Interoperability Matrix Tool.</block>
+  <block id="80137df58a946ee06ce041ff97ffa01c" category="paragraph">Esistono diversi requisiti e limitazioni per i server dati ONTAP utilizzati con Novus. Per la versione iniziale del prodotto, si tratta di una piattaforma AFF basata su ONTAP con miglioramenti hardware specifici di Novus e un profilo software e di configurazione limitato. Il design supportato è intenzionalmente limitato al momento del lancio, con i principali requisiti e limitazioni esplicitamente identificati.</block>
+  <block id="0412c8fc8fdf62a908f6df80191c9797" category="list-text">AFF A90 per NetApp Novus</block>
+  <block id="78ad06512c37018c753d3b8696262914" category="list-text">Questo è un sistema AFF A90 configurato specificamente per Novus e utilizzato come _ONTAP data server_ in un'implementazione Novus. Ogni AFF A90 per NetApp Novus è una coppia HA ONTAP a due nodi, cluster senza switch, con doppia NVRAM e networking host 400GbE.</block>
+  <block id="19d3ac248b5c90139734c975779a07fc" category="list-text">Dettagli ONTAP</block>
+  <block id="57b88125c68ea728d9c4a56530948ea3" category="list-text">I server dati Novus ONTAP eseguono una versione personalizzata di ONTAP 9.19.1.</block>
+  <block id="0b9c6eef4e3d3a222eb04e910d252339" category="list-text">Licenze</block>
+  <block id="0cfd223d986e720ebc66e8922ee80fbe" category="list-text">Novus utilizza ONTAP One. Non è richiesta alcuna licenza aggiuntiva.</block>
+  <block id="62729d45015204d3c18b606e8b130fba" category="list-text">NVRAM e hardware di base</block>
+  <block id="19df370f56ca362e0f12a957c2f24e3d" category="list-text">Il server dati ONTAP richiede due schede NVRAM anziché la configurazione standard a scheda singola. Il sistema deve utilizzare la configurazione hardware AFF per Novus, inclusa una configurazione di fabbrica che identifichi la variante del server dati ONTAP con doppia NVRAM.</block>
+  <block id="6fdb75d7463ed3b21de808a4997142a6" category="list-text">Hardware di rete</block>
+  <block id="d382787d6a25ca6ebe3e0120a0e69179" category="list-text">Il data server ONTAP richiede schede di rete CX-7 che supportino la connettività front-end a 400G, HA back-to-back a 400G e cluster back-to-back a 100G.</block>
+  <block id="f23eb97e49afc006ec38a2844e5d2d9c" category="list-text">Dimensione del cluster e HA</block>
+  <block id="5bc926c2e260a7d4cae7682f7a9f3805" category="list-text">La distribuzione supportata del server dati ONTAP è una singola coppia HA, implementata come cluster senza switch a due nodi.</block>
+  <block id="df926542d1d5a9624603245475e2182a" category="list-text">Requisito SVM</block>
+  <block id="9f042b7e4e7ab06ad0d8ac3c0161e928" category="list-text">Il supporto è limitato a una sola SVM di dati per cluster.</block>
+  <block id="9985b4390c40137573e6da05caf85874" category="list-text">Protocolli</block>
+  <block id="8f98f9138ea133966cc3046379b7caa5" category="list-text">Il percorso dei dati ONTAP supporta solo NFSv3. Altri protocolli (NFSv4, SMB, S3, protocolli SAN) non sono supportati sul percorso dei dati ONTAP nella versione iniziale.</block>
+  <block id="41fd49de9a67d9c0c7a368dfec87cf55" category="paragraph">Il Novus Data Director (NDD) è un'implementazione del server di metadati (MDS) come definito nell'architettura Parallel NFS (pNFS). Si tratta di un pacchetto software-defined in esecuzione su un server configurato correttamente.</block>
+  <block id="ab89730b1c0ddbc96294317b88683dd7" category="admonition">Per una distribuzione supportata sono necessari almeno tre Novus Data Directors. Ciascuno deve trovarsi in un dominio di guasto separato per garantire alta disponibilità e tolleranza ai guasti. Contatta il tuo team commerciale NetApp per determinare il giusto numero di AFF A90 per i sistemi Novus e di server NDD per il tuo ambiente e carico di lavoro.</block>
+  <block id="5f4e9c328b9900db18c9c15431444402" category="list-text">Riepilogo della piattaforma host</block>
+  <block id="f6b126dfffe01c1d4e08552b0e457433" category="list-text">Un server fornito dal cliente o da un partner che soddisfa i requisiti di configurazione hardware e firmware di NetApp Novus. Gli host devono eseguire RHEL 9 con unità NVMe in RAID1 (2 unità) o RAID10 (da 4 a 12 unità).</block>
+  <block id="b6406c75c0350aec23c47fee1ee2a193" category="list-text">Linux e NFS</block>
+  <block id="7151cfccfe49d166eb7ed1b2a3e0a542" category="list-text">Red Hat Linux 9.8 con NFSv4 (v4.2); pNFS deve essere abilitato e configurato correttamente.</block>
+  <block id="407b3fa32a9da4d905f9bcac5ca88dd0" category="list-text">Implementazione minima del cluster</block>
+  <block id="371667d4c676e528821c40011ab19822" category="list-text">Tre Novus Data Directors in tre failure domain separati che supportano almeno una coppia HA ONTAP. Ogni tenant ha il proprio database cluster con tre copie dei dati (una su ciascun host).</block>
+  <block id="a5fa5746370b608090b994a97b49e98b" category="list-text">Networking</block>
+  <block id="09c0693af0c4d2ca6fffac5a6cfc15c6" category="list-text">Ogni tenant è isolato sulla propria VLAN e VRF.</block>
+  <block id="8677447f85f9fe9f64b0a1fdc8257df7" category="section-title">Client Novus</block>
+  <block id="a0313a5eee50de66036769f364a3da54" category="paragraph">Il layout di file flessibile NFS è supportato utilizzando i client NFS standard disponibili con Ubuntu 24.04 e versioni successive, nonché con Red Hat Linux 9.8 e versioni successive. Per un layout di file flessibile con striping, è supportato solo il client NFS su Ubuntu 26.04.</block>
+  <block id="e1255e2b38f609706d5012298e1d8572" category="list-text"><block ref="e1255e2b38f609706d5012298e1d8572" category="inline-link-macro-rx"></block></block>
+  <block id="e5e09031843479ef9ef8cbbd4c2f404c" category="inline-link">NetApp Hardware Universe</block>
+  <block id="4c1c93397a0ad82f0b80502a6c7c0799" category="list-text"><block ref="4c1c93397a0ad82f0b80502a6c7c0799" category="inline-link-rx"></block></block>
+  <block id="918d32b75f0ab883abba3a8dc0c3ae8d" category="inline-link">Strumento Interoperability Matrix Tool</block>
+  <block id="1348884cba210fd3710a88c66a82ead4" category="list-text"><block ref="1348884cba210fd3710a88c66a82ead4" category="inline-link-rx"></block></block>
+  <block id="8bbb4bcec95e49c78db0a96031291796" category="summary">Sono disponibili risorse aggiuntive a cui puoi accedere per gestire e supportare Novus, nonché per saperne di più su ONTAP e sui relativi prodotti e servizi NetApp.</block>
+  <block id="f6e049d51130319c9676fa72ba222714" category="doc">Risorse aggiuntive per i sistemi storage Novus</block>
+  <block id="005d884ee35bad9a1f620da17f3dd01d" category="section-title">Novus e risorse correlate</block>
+  <block id="504ab4dbe5e77c1f7c6c877d6215262e" category="inline-link">NetApp Novus</block>
+  <block id="e7bf046058094c6ea353835df32f9828" category="list-text"><block ref="e7bf046058094c6ea353835df32f9828" category="inline-link-rx"></block></block>
+  <block id="eb75aeb3b4b2b9734ba3e52f5483f0b2" category="section-title">Documentazione ONTAP</block>
+  <block id="b33eab3f59e19afa3da64a7838372c21" category="inline-link">ONTAP unificato</block>
+  <block id="8cba816055afe0aa04b7fa2e9b1ba364" category="list-text"><block ref="8cba816055afe0aa04b7fa2e9b1ba364" category="inline-link-rx"></block></block>
+  <block id="3a77755c4eaf7897cda1f7db8e722428" category="inline-link">Automazione ONTAP</block>
+  <block id="486f6a4f906831713aed8c2567b3d906" category="list-text"><block ref="486f6a4f906831713aed8c2567b3d906" category="inline-link-rx"></block></block>
+  <block id="0659d428df833a806e29e65e632d380a" category="section-title">NetApp supporto</block>
+  <block id="9d2169c1c2855b78a7aeaa4f42d27dc7" category="inline-link">Sito di supporto NetApp</block>
+  <block id="df9f9e9d2170bb250eb3337384525b86" category="list-text"><block ref="df9f9e9d2170bb250eb3337384525b86" category="inline-link-rx"></block></block>
+  <block id="9ed4a475dd3705157a9fed8811f63ce2" category="inline-link">Tool NetApp Interoperability Matrix</block>
+  <block id="f6735f5b05187d612456240f1b4e15a9" category="list-text"><block ref="f6735f5b05187d612456240f1b4e15a9" category="inline-link-rx"></block></block>
+  <block id="668e2078ef1b1722c77cdb5c523a4463" category="inline-link">NetApp Knowledge Base</block>
+  <block id="0a33bb860367c3285ff09c33b79eef88" category="list-text"><block ref="0a33bb860367c3285ff09c33b79eef88" category="inline-link-rx"></block></block>
+  <block id="d41d8cd98f00b204e9800998ecf8427e" category="summary"></block>
+  <block id="d6e3d74dae457438c77a9af9b45ebdb5" category="doc">Note legali per il sistema storage Novus</block>
+  <block id="e9c44bbfd795a5d63d74c6a77afee70d" category="paragraph">Le note legali forniscono accesso a dichiarazioni di copyright, marchi, brevetti e altro.</block>
+  <block id="6016a2b341113bf496b719905398ecd2" category="section-title">Copyright</block>
+  <block id="52009bb7ee17227f566cd26a02caee56" category="inline-link-macro"><block ref="52009bb7ee17227f566cd26a02caee56" category="inline-link-rx"></block></block>
+  <block id="a1a9afcf552a769c282769271829889a" category="paragraph"><block ref="a1a9afcf552a769c282769271829889a" category="inline-link-macro-rx"></block></block>
+  <block id="126a02652da6de02962cf1b654fd6376" category="section-title">Marchi</block>
+  <block id="c4ce4761e466527d26b3e3d5ed1006fd" category="paragraph">NETAPP, il logo NETAPP e i marchi elencati nella pagina dei marchi di NetApp sono marchi di NetApp, Inc. Altri nomi di aziende e prodotti possono essere marchi dei rispettivi proprietari.</block>
+  <block id="f99aa604031e5049799e73b5c3748a98" category="inline-link-macro"><block ref="f99aa604031e5049799e73b5c3748a98" category="inline-link-rx"></block></block>
+  <block id="5d545fe5152641e2ebe654e336e520e5" category="paragraph"><block ref="5d545fe5152641e2ebe654e336e520e5" category="inline-link-macro-rx"></block></block>
+  <block id="be89498d2f8a22ce47c02ba9795fe2af" category="section-title">Brevetti</block>
+  <block id="d0b19d36be2c5f16e9aef46c8a452d3d" category="paragraph">Un elenco aggiornato dei brevetti di proprietà di NetApp è disponibile all'indirizzo:</block>
+  <block id="88e5eabd3917048b6927c42496b98f86" category="inline-link-macro"><block ref="88e5eabd3917048b6927c42496b98f86" category="inline-link-rx"></block></block>
+  <block id="dd38f906b37d412de7d1c1dcf4cbf31c" category="paragraph"><block ref="dd38f906b37d412de7d1c1dcf4cbf31c" category="inline-link-macro-rx"></block></block>
+  <block id="56c34c6410dd45c5cec44149ad0ce037" category="section-title">Informativa sulla privacy</block>
+  <block id="8acb58cbd50ef1b468a020ee0bd351d3" category="inline-link-macro"><block ref="8acb58cbd50ef1b468a020ee0bd351d3" category="inline-link-rx"></block></block>
+  <block id="2352c4e1f4d0024ade0869e00e6243f4" category="paragraph"><block ref="2352c4e1f4d0024ade0869e00e6243f4" category="inline-link-macro-rx"></block></block>
+  <block id="c0227cef6f07a8cd2ac72f2945b031aa" category="section-title">Open source</block>
+  <block id="9b73989307c1975dfa4d5e1581e4afe8" category="paragraph">I file di avviso forniscono informazioni sui diritti d'autore e sulle licenze di terze parti utilizzati nel software NetApp.</block>
+  <block id="85de280c3a5f2d52ffa67a8440061501" category="summary">Scopri le nuove funzionalità incluse in NetApp Novus.</block>
+  <block id="30b88d110cd8ae8729a94c48d6f97c3a" category="doc">Novità nella release iniziale del sistema storage Novus</block>
+  <block id="787ce35d599e16c9d9a27419a2dcb3a1" category="section-title">Rilascio iniziale di Novus</block>
+  <block id="23334411d61d606c0a9541d73b783565" category="paragraph">NetApp Novus combina la scalabilità di NFS parallelo (pNFS) con le comprovate funzionalità di gestione dei dati di ONTAP, offrendo una soluzione storage ad elevate performance per l'AI e altri carichi di lavoro a elevata intensità di dati. È progettato per offrire throughput all'avanguardia e bassa latenza, per soddisfare i requisiti dei clienti con sistemi di calcolo exascale e fabbriche AI su scala gigawatt. Consulta le pagine seguenti per saperne di più sulla sua architettura e sui requisiti di implementazione.</block>
+  <block id="83471ca34a8dcef4f963ba05672dd66c" category="inline-link-macro">Scopri di più su Novus</block>
+  <block id="cb9f8001fc9fd393f841a963e817f9eb" category="list-text"><block ref="cb9f8001fc9fd393f841a963e817f9eb" category="inline-link-macro-rx"></block></block>
+  <block id="8df21f7a5e6b140aa5885d0ec4270c76" category="list-text"><block ref="8df21f7a5e6b140aa5885d0ec4270c76" category="inline-link-macro-rx"></block></block>
+  <block id="f1a74f72dd4d807ff3fdd42ba3446293" category="summary">I Novus Data Directors (NDD) costituiscono il punto di ancoraggio del layer di metadati di Novus, gestendo la distribuzione e la proprietà dei metadati tra i nodi MDS. Puoi utilizzare l'interfaccia a riga di comando degli NDD per eseguire attività amministrative. Prima di implementare NetApp Novus in un ambiente di produzione, è fondamentale comprendere la struttura amministrativa e le opzioni di configurazione.</block>
+  <block id="09d685f2d4553e48231d2f3f730da040" category="doc">Scopri come utilizzare Novus Data Director</block>
+  <block id="4032b78e2449831b67fae92e48fda6ab" category="section-title">Interfaccia a riga di comando di Novus</block>
+  <block id="cda2b41ffced1ff139ce493eceb392b8" category="paragraph">Amministri Novus Data Director dall'interfaccia a riga di comando Linux di uno degli host MDS attivi. Puoi collegarti a un host MDS localmente o tramite SSH. Nell'interfaccia a riga di comando di NDD sono disponibili due strumenti principali.</block>
+  <block id="3403879e8d31cb61a2232bf4a2153933" category="list-text">mds-admin</block>
+  <block id="df761b95de637b0e220003200a747113" category="list-text">Opera su una singola istanza di nodo (un solo namespace) in diverse aree descritte di seguito. Il comando si connette all'endpoint di amministrazione di pnfs-mds (porta 50051 per impostazione predefinita).</block>
+  <block id="7499ac7c7ba65a0b9b16206c241a5687" category="list-text">ndd-admin</block>
+  <block id="93e607c902f5aaf4fa7cc4de180b5521" category="list-text">Opera sull'intera implementazione NDD (tutti gli host e i namespace). Puoi preparare gli host, effettuare il provisioning dei namespace e gestire attività di amministrazione e manutenzione come backup e ripristino, nonché la rotazione delle chiavi e gli aggiornamenti. Esegue<block ref="3403879e8d31cb61a2232bf4a2153933" prefix=" " category="inline-code"></block> i comandi per conto tuo secondo necessità.</block>
+  <block id="574fde817c98b1c22ac89406bf211a81" category="section-title">Usa <block ref="3403879e8d31cb61a2232bf4a2153933" prefix=" " category="inline-code"></block> per amministrare Novus</block>
+  <block id="d8e633f94a2590b318b82d362f76462d" category="paragraph">Puoi utilizzare la CLI di NDD per eseguire diverse attività amministrative su Novus Data Director. Queste attività rientrano in diverse categorie.</block>
+  <block id="83a63b05ffa2a1626642daa7270bf40b" category="admonition">Fai attenzione quando esegui i comandi nell'NDD. Alcuni comandi possono modificare lo stato del sistema o comportare rischi maggiori. Altri, come i comandi del nodo <block ref="2704ddced71e877905600819eb5a63b1" prefix="(" category="inline-code"></block>,<block ref="c996dfdd58f536b0fc9db6851c348341" prefix=" " category="inline-code"></block>,<block ref="fb433a9b7897073e3d41673a4e2e35a5" prefix=" " category="inline-code"></block>), possono causare danni.</block>
+  <block id="3e78d50cabed40bc7a0968312d0543a2" category="list-text">Integrità, diagnostica e supporto</block>
+  <block id="63d96388c81952d00cb40d54dd5ecf51" category="list-text">Determina lo stato del cluster NDD</block>
+  <block id="d475d3e4dc80b85f13a8b28e1542a673" category="list-text">Raccogli il pacchetto di supporto e stampa la versione del protocollo</block>
+  <block id="b1e6958c58748f78509de51a7028db44" category="list-text">Elimina i file e i record residui lasciati da eventuali arresti anomali</block>
+  <block id="03b7d2cac82069733f7271ddab041179" category="list-text">Controlla o ripara il registro delle<block ref="3403879e8d31cb61a2232bf4a2153933" prefix=" " category="inline-code"></block> azioni</block>
+  <block id="ee7291736391083973dd9e9e53617bd7" category="list-text">Appartenenza al cluster MDS e aggiornamenti</block>
+  <block id="8213de57a2486b071781197d5d71b1aa" category="list-text">Aggiungi, svuota, scollega o rimuovi i nodi MDS e collega copie standby</block>
+  <block id="bf17eeedc03237b5d8b483daf13455d2" category="list-text">Esegui aggiornamenti progressivi e applica le modifiche di configurazione un nodo alla volta</block>
+  <block id="905699f6d4dca322036625d48020394e" category="list-text">Proprietà dei metadati: come viene suddiviso lo spazio dei nomi tra i nodi MDS</block>
+  <block id="2532e7287b08b2e12940681b51836e7e" category="list-text">Elenca, sposta, dividi e riassegna i sottoalberi tra i nodi MDS e approva le proposte di divisione automatica</block>
+  <block id="2d440028e85f3ccd4d99b66b884a7106" category="list-text">Riequilibra gli shard e spiega dove è posizionato un percorso</block>
+  <block id="c4d27c8eaff6edb9aac1ac66fd878ba0" category="list-text">Gestione del server dati (backend ONTAP)</block>
+  <block id="f81448f97a4cde1c65e3849f5c219a24" category="list-text">Registra, rimuovi, convalida e svuota i server di dati e imposta il loro stato</block>
+  <block id="dd0669ff0431050853d5c9081e33a0cf" category="list-text">Controlla la capacità, imposta i pesi di posizionamento, configura gli indirizzi multipath e le versioni NFS e gestisci i mount del data server sull'host MDS</block>
+  <block id="ef8f90aa3c280ed241a1a9d0b4b078bf" category="list-text">Rivendica i marcatori di proprietà sulle esportazioni e mantieni l'inventario degli host del data server</block>
+  <block id="5b69d3ac793d2b847438082f30333a1c" category="list-text">Posizionamento e protezione dei dati</block>
+  <block id="93ac3b6a1fb9dcf232f0e92142cf9b74" category="list-text">Individua quale server dati contiene un file, quindi spostalo, rimappalo o aggiungi un mirror</block>
+  <block id="8f3fae040b4d7742eaf4e4e4b4d6bdfd" category="list-text">Riparare i mirror su un server di dati, spostare i mirror tra server di dati ed eseguire il backfill dei file fino al numero target di mirror</block>
+  <block id="601f040c6814a131e334030e3a687619" category="list-text">Gestisci il pool di file creati in anticipo</block>
+  <block id="b46b03dabe5a5adbbf02516e2bdaca9b" category="list-text">Attiva o disattiva il tiering</block>
+  <block id="92faca2d299295d8ffbe4ea7971e9487" category="list-text">Attiva o disattiva lo striping esteso per i percorsi HPC</block>
+  <block id="5ff44419f5b72cb9f4bd333c31e558ad" category="list-text">Policy dello spazio dei nomi e gestione dei dati</block>
+  <block id="4fc493bff337414191d916435a53e931" category="list-text">Imposta le quote</block>
+  <block id="d32f1d932550ec875807fe3e2ded9eef" category="list-text">Aggiungi tag di metadati ai percorsi e cerca per tag</block>
+  <block id="3fdf672c81679c560631b8eddddac6be" category="list-text">Esegui il backup, verifica e ripristina il catalogo dei metadati</block>
+  <block id="9564937f289b018bc04bcf16bdb5107c" category="list-text">Clienti, tenant e processi aggiuntivi</block>
+  <block id="7aed893bb6a8be1e92fb82ad13bada1d" category="list-text">Forza la scadenza delle sessioni client, elimina i record di ripristino dei client e gestisci i record di identità dei client</block>
+  <block id="2f76715ed99c0063b33e69d910d36ebb" category="list-text">Gestisci il routing VIP dopo il ripristino</block>
+  <block id="e436a692adbc2c7a4f790b07d7da71a7" category="list-text">Crea, metti in pausa, riprendi, crea snapshot, ripristina, migra e limita i tenant</block>
+  <block id="63998ce1e9dee19fef29de6d661ec2c5" category="list-text">Registra e limita le risorse dei processi helper ("companion")</block>
+  <block id="2aae6ce14ff7e228947372877e77feb3" category="section-title">Guida introduttiva all'utilizzo della CLI di NDD</block>
+  <block id="81cd0a80e8eecd20cd90ce825e9f9322" category="paragraph">Per iniziare, puoi impartire alcuni comandi di base.</block>
+  <block id="bbe48fb854ea022537208eeeff822f91" category="paragraph-title">Informazioni su questa attività</block>
+  <block id="7b4cb99d0cb59a61a003611166ebe795" category="paragraph">Per impostazione predefinita,<block ref="3403879e8d31cb61a2232bf4a2153933" prefix=" " category="inline-code"></block> si connette al server di metadati sull'host locale (127.0.0.1 alla porta 50051). Per raggiungere un'istanza NDD diversa, usa le opzioni<block ref="b965328cc0f8996eac5666392711743e" prefix=" " category="inline-code"></block> con<block ref="a138fc24830c2f73c6a7e2695ea66928" prefix=" " category="inline-code"></block>. Assicurati di usare l'indirizzo MDS dell'host e non il suo indirizzo di gestione.</block>
+  <block id="135b308ed83c53f1516b7c754566d1c4" category="paragraph-title">Prima di iniziare</block>
+  <block id="fe2e942f98e8cef0a2041536c4f90706" category="paragraph">Ti servono l'indirizzo IP o l'hostname di un host MDS e l'accesso SSH a quest'ultimo. Ti servono anche le credenziali appropriate per accedere come utente root.</block>
+  <block id="f3a29486bed19a90f2da6d007818b427" category="list-title">Passaggi</block>
+  <block id="256d8fcec5220be42ad87b8faac6ee1a" category="list-text">Connettiti a un host MDS tramite SSH.</block>
+  <block id="0aae14b1fbdfb0baf08b5a1383f534e9" category="paragraph"><block ref="a902b4c94151da1958ffc552d917b245" prefix="" category="inline-code"></block></block>
+  <block id="71b270117f3ec85dabb18d3aaaffcb56" category="list-text">Visualizza la release e la versione del protocollo.</block>
+  <block id="1a680e0bbd75e0393d991775f97ad0ff" category="paragraph"><block ref="52d4ac63ea797c5a014459ed5b628890" prefix="" category="inline-code"></block></block>
+  <block id="9fd237c0b92d4d4b290417e883e18299" category="list-text">Ottieni assistenza con i comandi</block>
+  <block id="894ddbbdc2dfaf1d53a6493bc878eb2c" category="paragraph">Nota che<block ref="0c113ca6d57519b559ba5a426be3c6b6" prefix=" " category="inline-code"></block> elenca tutti i comandi disponibili e<block ref="10be18b2b9f264be48f74545ea99049d" prefix=" " category="inline-code"></block> mostra le opzioni per un comando specifico. Inserisci un comando completo composto da più parole tra virgolette doppie. Puoi anche cercare per parola chiave usando<block ref="d2e408413c29fe2e6a4cad7695a52974" prefix=" " category="inline-code"></block>.</block>
+  <block id="7b880dfb6ca2e23b8af6f0ff06298ae6" category="summary">Per iniziare a utilizzare Novus, puoi eseguire un controllo di integrità NDD per assicurarti che la distribuzione funzioni correttamente.</block>
+  <block id="ed5006092a1a04773e8a4eef3f0c5712" category="doc">Verifica lo stato di salute di Novus Data Director</block>
+  <block id="a66b22ed3003e685956811fa72be2593" category="paragraph">Questa procedura ti guida nella verifica dello stato di salute della tua implementazione di Novus Data Director (NDD) per assicurarti che tutti i componenti funzionino correttamente.</block>
+  <block id="e9c302a9f2a6e13f4242407bae30f46e" category="inline-link-macro">Scopri come usare NDD</block>
+  <block id="44ab904bdafc3ed1c3125ec5423aac41" category="paragraph">Dovresti avere accesso all'interfaccia a riga di comando NDD, inclusi i permessi necessari per eseguire il <block ref="3403879e8d31cb61a2232bf4a2153933" prefix=" " category="inline-code"></block>comando. Vedi anche <block ref="6edee4663b1caa6090e0adb722cf4375" category="inline-link-macro-rx"></block>.</block>
+  <block id="b1034f759a0b4e42296fed4cdbdf8f48" category="list-text">Verifica lo stato di salute generale:</block>
+  <block id="5f950ecd91dd844e25a7bc2d84f1a156" category="paragraph"><block ref="d5cfcef631ed8f8651878310bfc6a028" prefix="" category="inline-code"></block></block>
+  <block id="576b9969a05c281adf74bbf994e41b25" category="list-text">Verifica che tutti i nodi MDS siano raggiungibili:</block>
+  <block id="b50358eef78a650bac67a20e2e13ae45" category="paragraph"><block ref="a7b60b96946e34a9544f8cd07856c871" prefix="" category="inline-code"></block></block>
+  <block id="40202461fc4b6f5fbd40e5e285d39c9c" category="list-text">Elenca i server dati ONTAP:</block>
+  <block id="ff2abb446689abe2781d8cec657d5080" category="paragraph"><block ref="917352997c9ef2e9b56ca4a4c27fe5e9" prefix="" category="inline-code"></block></block>
+  <block id="2770557a92fa714c464ef32564697b33" category="list-text">Visualizza la capacità dei server di dati:</block>
+  <block id="4dbbca50fcfdc748a9cefb42e8384fbe" category="paragraph"><block ref="f1f21ebf27841ad2bda7e171e9c5b456" prefix="" category="inline-code"></block></block>
+  <block id="eba179d8c9d70111a534444bc6305d89" category="list-text">Esegui un controllo dello stato di salute:</block>
+  <block id="b0d1eadaab14e5dd108bfd23ee02b0cd" category="paragraph"><block ref="8b680e0cb58afb95088dc7ba85c585f9" prefix="" category="inline-code"></block></block>
+  <block id="2aadd7d69c3f057723c064a12d99ad2b" category="list-text">Individua la posizione in cui sono memorizzati i dati di un file:</block>
+  <block id="1c5da3c5ba881bc02496773f41ca78ad" category="paragraph"><block ref="078310a2e06fe5cd7d97db260f39722e" prefix="" category="inline-code"></block></block>
+  <block id="d671b37f3f24706b018b677923a9617e" category="sidebar">NetApp Novus è una soluzione storage software-defined progettata per soddisfare le esigenze specifiche dei clienti con sistemi di calcolo exascale e fabbriche AI su scala gigawatt. Si basa su un'architettura NFS parallelo (pNFS) con server dati ONTAP. Novus è progettato principalmente per ambienti cloud e hyperscaler; riduce la latenza e i colli di bottiglia, mantenendo le GPU occupate, il che migliora drasticamente performance e scalabilità.</block>
+  <block id="121c0bcd0c9cb081cadfce0dcade3cea" category="sidebar">Documentazione Novus</block>
+  <block id="be11c74c1dd7f307bb80183a90dc2067" category="sidebar">Inizia</block>
+  <block id="ac413fa72b104c81e2ef5994db66f39e" category="sidebar">Architettura Novus</block>
+  <block id="5a2ebfb8baa378cfcfcba58bbb1380c2" category="sidebar">Requisiti</block>
+  <block id="541480548707d582fc387aee6e67c721" category="sidebar">Usa Novus Data Director</block>
+  <block id="54b00db9f018bf879ea1f47d640bf1ed" category="sidebar">Scopri come utilizzare l'NDD</block>
+  <block id="160a05dc04d5823e22988187806fd40e" category="sidebar">Valuta lo stato di NDD</block>
+  <block id="bf07f432276ee2fe7e55f9ea12c2ba5a" category="sidebar">Scopri di più</block>
+  <block id="8fe415966f0c83729ab7f240919afd11" category="sidebar">Domande frequenti sui sistemi Novus</block>
+  <block id="8cd58c89ff3d51a256ecfe3fe8bab20f" category="sidebar">Risorse aggiuntive</block>
+  <block id="8da5571296afef0e15e9cceae16a7192" category="sidebar">Documentazione di Novus</block>
+  <block id="1fe917b01f9a3f87fa2d7d3b7643fac1" category="sidebar">Domande frequenti</block>
+  <block id="30d965eef5ba25c6b9998ae38270b43e" category="sidebar">Note legali</block>
+  <block id="88b058d839a498eaab9546ac2e4f7203" category="sidebar">Scopri di più sul tuo sistema Novus</block>
+  <block id="2d242bb36ec91b32005f9296ff03a912" category="sidebar">Architettura</block>
+  <block id="90ea373e838ebbb127893f752d3bdee5" category="sidebar">Ambiente ed elaborazione</block>
+  <block id="39663a86a61657cd622de3e1c05707ec" category="sidebar">Esempio di implementazione di Novus</block>
+  <block id="d59048f21fd887ad520398ce677be586" category="sidebar">Saperne di più</block>
+  <block id="7d0ee6fed10d3d4e5c9ee496729ab519" category="sidebar">Note di rilascio</block>
+  <block id="98ad55a24bfe8ea96b89a3f91b5a9b91" category="sidebar">Cosa c'è di nuovo nella versione iniziale</block>
+  <block id="00a527d997db989d93bacb8dc93db32f" category="sidebar">Scopri di più su Novus Data Director</block>
+  <block id="92675806a6b015bb6d65be3565b9618a" category="sidebar">Verifica lo stato di salute di un'istanza NDD</block>
+</blocks>

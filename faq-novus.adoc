@@ -1,0 +1,50 @@
+---
+sidebar: sidebar 
+permalink: faq-novus.html 
+keywords: novus, novus system, faq, frequently asked questions 
+summary: Questa sezione FAQ fornisce risposte alle domande che potresti avere sul tuo sistema storage Novus. Include anche concetti e terminologia che possono esserti utili per esplorare il prodotto più nel dettaglio. 
+---
+= Domande frequenti sui sistemi di storage Novus
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Questa sezione FAQ fornisce risposte alle domande che potresti avere sul tuo sistema storage Novus. Include anche concetti e terminologia che possono esserti utili per esplorare il prodotto più nel dettaglio.
+
+.Quali protocolli supporta NetApp Novus?
+Novus supporta i seguenti protocolli:
+
+* pNFS con NFS v4.2 (necessario per il layout di file flessibile di pNFS)
+* NFS su RDMA
+* NVIDIA GPUDirect
+
+
+.Novus supporta il layout di file flessibile pNFS?
+Sì, il layout di file flessibile pNFS è supportato. Per il layout di file flessibile con wide striping, ti serve un client NFS in una distribuzione Linux supportata. A ottobre 2026, solo il client NFS fornito con Ubuntu 26.04 supporta il wide striping.
+
+.Novus richiede un client del file system personalizzato?
+No. Novus funziona con i client NFS standard.
+
+.Novus supporta il multitenancy?
+Sì, Novus offre il multi-tenant sicuro tramite:
+
+* Isolamento del namespace a livello dei metadati
+* Isolamento di rete tramite sottorete/VLAN
+* Pool di nodi: Novus Data Director dedicato, namespace e KVS
+* Provider di identità e gestione delle chiavi di crittografia per tenant
+* Server dati dedicati per i tenant
+
+
+.Qual è la capacità di storage massima per un cluster Novus?
+La versione iniziale di Novus supporta fino a 600 coppie HA AFF A90 (sistemi). Il limite totale di storage per un cluster dipende dalle dimensioni delle unità utilizzate.
+
+.Come vengono partizionati e protetti i metadati nei Novus Data Directors?
+I metadati sono suddivisi tra gruppi di nodi e replicati tre volte all'interno di ciascun gruppo di nodi. Un gruppo di nodi è composto da tre Data Directors, motivo per cui il livello dei metadati viene sempre espanso in multipli di tre. La suddivisione avviene per intervallo di chiavi: ad esempio, un gruppo di nodi contiene le chiavi dalla A alla N e un altro quelle dalla M alla Z, quindi, man mano che vengono aggiunti gruppi di nodi, le tabelle dei metadati vengono partizionate sull'insieme più ampio.
+
+.Puoi riutilizzare un cluster ONTAP AFF A90 esistente e usarlo per Novus?
+No. I controller ONTAP esistenti non possono essere riconvertiti né aggiornati per essere utilizzati per un'implementazione di Novus. Devi acquistare un nuovo AFF A90 per NetApp Novus.

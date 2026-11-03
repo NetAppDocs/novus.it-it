@@ -1,0 +1,32 @@
+---
+sidebar: sidebar 
+permalink: get-started/deployment-example.html 
+keywords: novus, novus deployment, deployment example 
+summary: Un sistema storage Novus può essere implementato in diverse configurazioni a seconda delle tue esigenze di prestazioni e capacità. Ecco un semplice esempio di implementazione. 
+---
+= Esempio di implementazione di un sistema storage Novus
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Un sistema storage Novus può essere implementato in diverse configurazioni a seconda delle tue esigenze di prestazioni e capacità. Ecco un semplice esempio con due figure.
+
+
+
+[[storage-cluster-connectivity]]
+== Connettività del cluster di storage
+
+La figura seguente illustra la tipica connettività di rete del sistema storage necessaria per un'implementazione Novus.
+
+image:novus-deploy1.png["Implementazione Novus 1"]
+
+
+
+[[high-performance-storage-hps-network-architecture]]
+== Architettura di rete per lo storage dalle performance elevate
+
+Le implementazioni con 1024 GPU richiedono un totale di tre sistemi storage Novus AFF A90 di NetApp e tre server Novus Data Director (NDD) per soddisfare i requisiti di prestazioni standard delle GPU di ultima generazione. La figura seguente illustra questa configurazione insieme alla relativa architettura di rete HPS per un sistema di queste dimensioni.
+
+image:novus-deploy2.png["Implementazione Novus 2"]

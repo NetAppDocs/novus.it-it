@@ -1,0 +1,47 @@
+---
+sidebar: sidebar 
+permalink: use-ndd/task-check-health.html 
+keywords: get started, cli, novus data director, ndd, health check, mds-admin 
+summary: Per iniziare a utilizzare Novus, puoi eseguire un controllo di integrità NDD per assicurarti che la distribuzione funzioni correttamente. 
+---
+= Verifica lo stato di salute di Novus Data Director
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Per iniziare a utilizzare Novus, puoi eseguire un controllo di integrità NDD per assicurarti che la distribuzione funzioni correttamente.
+
+.Informazioni su questa attività
+Questa procedura ti guida nella verifica dello stato di salute della tua implementazione di Novus Data Director (NDD) per assicurarti che tutti i componenti funzionino correttamente.
+
+.Prima di iniziare
+Dovresti avere accesso all'interfaccia a riga di comando NDD, inclusi i permessi necessari per eseguire il  `mds-admin`comando. Vedi anche link:../use-ndd/learn-use-ndd.html["Scopri come usare NDD"].
+
+.Passaggi
+. Verifica lo stato di salute generale:
++
+`mds-admin status`
+
+. Verifica che tutti i nodi MDS siano raggiungibili:
++
+`mds-admin cluster status`
+
+. Elenca i server dati ONTAP:
++
+`mds-admin ds list`
+
+. Visualizza la capacità dei server di dati:
++
+`mds-admin ds capacity show`
+
+. Esegui un controllo dello stato di salute:
++
+`timeout 60 mds-admin doctor`
+
+. Individua la posizione in cui sono memorizzati i dati di un file:
++
+`mds-admin file locate <path>`
+
+

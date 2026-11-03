@@ -1,0 +1,67 @@
+---
+sidebar: sidebar 
+permalink: get-started/requirements.html 
+keywords: novus requirements, novus hardware, novus software, novus data director, ontap data server, ndd 
+summary: Dovresti conoscere i requisiti di Novus, che generalmente si suddividono in tre categorie. 
+---
+= Requisiti di Novus
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Dovresti conoscere i requisiti di Novus, che generalmente si suddividono in tre categorie.
+
+
+TIP: Per ulteriori informazioni, consulta anche i requisiti e le restrizioni del prodotto in NetApp Hardware Universe e Interoperability Matrix Tool.
+
+
+
+[[ontap-data-server]]
+== server dati ONTAP
+
+Esistono diversi requisiti e limitazioni per i server dati ONTAP utilizzati con Novus. Per la versione iniziale del prodotto, si tratta di una piattaforma AFF basata su ONTAP con miglioramenti hardware specifici di Novus e un profilo software e di configurazione limitato. Il design supportato è intenzionalmente limitato al momento del lancio, con i principali requisiti e limitazioni esplicitamente identificati.
+
+AFF A90 per NetApp Novus:: Questo è un sistema AFF A90 configurato specificamente per Novus e utilizzato come _ONTAP data server_ in un'implementazione Novus. Ogni AFF A90 per NetApp Novus è una coppia HA ONTAP a due nodi, cluster senza switch, con doppia NVRAM e networking host 400GbE.
+Dettagli ONTAP:: I server dati Novus ONTAP eseguono una versione personalizzata di ONTAP 9.19.1.
+Licenze:: Novus utilizza ONTAP One. Non è richiesta alcuna licenza aggiuntiva.
+NVRAM e hardware di base:: Il server dati ONTAP richiede due schede NVRAM anziché la configurazione standard a scheda singola. Il sistema deve utilizzare la configurazione hardware AFF per Novus, inclusa una configurazione di fabbrica che identifichi la variante del server dati ONTAP con doppia NVRAM.
+Hardware di rete:: Il data server ONTAP richiede schede di rete CX-7 che supportino la connettività front-end a 400G, HA back-to-back a 400G e cluster back-to-back a 100G.
+Dimensione del cluster e HA:: La distribuzione supportata del server dati ONTAP è una singola coppia HA, implementata come cluster senza switch a due nodi.
+Requisito SVM:: Il supporto è limitato a una sola SVM di dati per cluster.
+Protocolli:: Il percorso dei dati ONTAP supporta solo NFSv3. Altri protocolli (NFSv4, SMB, S3, protocolli SAN) non sono supportati sul percorso dei dati ONTAP nella versione iniziale.
+
+
+
+
+[[novus-data-director]]
+== Novus Data Director
+
+Il Novus Data Director (NDD) è un'implementazione del server di metadati (MDS) come definito nell'architettura Parallel NFS (pNFS). Si tratta di un pacchetto software-defined in esecuzione su un server configurato correttamente.
+
+
+NOTE: Per una distribuzione supportata sono necessari almeno tre Novus Data Directors. Ciascuno deve trovarsi in un dominio di guasto separato per garantire alta disponibilità e tolleranza ai guasti. Contatta il tuo team commerciale NetApp per determinare il giusto numero di AFF A90 per i sistemi Novus e di server NDD per il tuo ambiente e carico di lavoro.
+
+Riepilogo della piattaforma host:: Un server fornito dal cliente o da un partner che soddisfa i requisiti di configurazione hardware e firmware di NetApp Novus. Gli host devono eseguire RHEL 9 con unità NVMe in RAID1 (2 unità) o RAID10 (da 4 a 12 unità).
+Linux e NFS:: Red Hat Linux 9.8 con NFSv4 (v4.2); pNFS deve essere abilitato e configurato correttamente.
+Implementazione minima del cluster:: Tre Novus Data Directors in tre failure domain separati che supportano almeno una coppia HA ONTAP. Ogni tenant ha il proprio database cluster con tre copie dei dati (una su ciascun host).
+Networking:: Ogni tenant è isolato sulla propria VLAN e VRF.
+
+
+
+
+[[novus-clients]]
+== Client Novus
+
+Il layout di file flessibile NFS è supportato utilizzando i client NFS standard disponibili con Ubuntu 24.04 e versioni successive, nonché con Red Hat Linux 9.8 e versioni successive. Per un layout di file flessibile con striping, è supportato solo il client NFS su Ubuntu 26.04.
+
+
+
+[[related-information]]
+== Informazioni correlate
+
+* link:../faq-novus.html["Domande frequenti sui sistemi di storage Novus"]
+* https://hwu.netapp.com/["NetApp Hardware Universe"^]
+* https://imt.netapp.com/["Strumento Interoperability Matrix Tool"^]
+

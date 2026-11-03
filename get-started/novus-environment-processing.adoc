@@ -1,0 +1,89 @@
+---
+sidebar: sidebar 
+permalink: get-started/novus-environment-processing.html 
+keywords: novus environment, novus processing, ndd 
+summary: 'Ci sono diversi aspetti importanti dell"ambiente Novus e del suo funzionamento che dovresti comprendere.' 
+---
+= Ambiente ed elaborazione del sistema storage Novus
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Ci sono diversi aspetti importanti dell'ambiente Novus e del suo funzionamento che dovresti comprendere.
+
+
+
+[[novus-data-director-and-ontap-data-server-internal-communication]]
+== Comunicazione interna tra Novus Data Director e il server dati ONTAP
+
+I Novus Data Directors comunicano con i server dati ONTAP per supportare l'accesso e la gestione dei file. Nella maggior parte dei casi, è l'NDD ad avviare queste operazioni, non i server ONTAP.
+
+
+
+[[ontap-data-server-discovery]]
+=== Rilevamento del server dati ONTAP
+
+I Novus Data Directors devono individuare i server dati disponibili. ONTAP non avvia mai la comunicazione con il Novus Data Director. Un operatore o uno strumento registra ciascun server dati tramite il file di configurazione `mds.conf`, che viene utilizzato all'avvio; i server dati possono anche essere aggiunti manualmente tramite il comando `mds-admin ds add`. Ogni server dati è rappresentato come una riga nell'archivio di metadati distribuito, che include host, export, porte, stato e capacità.
+
+
+
+[[ontap-data-server-availability]]
+=== Disponibilità del server dati ONTAP
+
+Esistono diversi processi usati per determinare la disponibilità di ciascun server dati ONTAP.
+
+Heartbeat:: L'MDS invia una chiamata RPC NULL NFSv3 tramite TCP a ciascun server dati online. Per impostazione predefinita, lo fa ogni 5 secondi utilizzando un messaggio heartbeat.
+Andare offline:: Dopo un certo numero di errori consecutivi, il server dati viene contrassegnato come offline. L'MDS smette di collocare nuovi file su di esso e informa i client di restituire i layout che puntano ad esso.
+Tornando indietro:: Dopo un numero sufficiente di test consecutivi andati a buon fine, torna online. Un periodo di raffreddamento impedisce che passi continuamente da uno stato all'altro.
+Gli errori del client non contano:: Quando un client segnala un errore, questo viene solo registrato. Lo stato di salute del server dati ONTAP è determinato esclusivamente dai probe.
+Il failover di ONTAP è invisibile:: Se una coppia HA ONTAP effettua un takeover, l'MDS lo rileva solo tramite timeout di rilevamento.
+
+
+
+
+[[ontap-data-server-data-content]]
+=== contenuto dei dati del server dati ONTAP
+
+L'NDD non chiede a ONTAP cosa memorizza. Lo sa già, perché crea ogni file di supporto:
+
+* Quando viene creato un file, l'MDS seleziona i server dati, crea i file di supporto su di essi e salva il risultato nella mappa delle stripe nell'archivio di metadati distribuito. La mappa delle stripe registra quale server dati e quale file handle NFS contengono ciascuna stripe e ciascun mirror.
+* I file di supporto su ONTAP hanno un formato di denominazione specifico nell'NDD.
+* La capacità è l'unico valore operativo che NDD legge da ONTAP utilizzando statvfs() su ogni export montato.
+* La dimensione del file non viene verificata rispetto a ONTAP. È determinata dal commit del layout del client.
+
+
+
+
+[[high-availability-and-resiliency-for-the-ndd-cluster]]
+== Elevata disponibilità e resilienza per il cluster NDD
+
+Il piano dei metadati, gestito dai Novus Data Directors, garantisce elevata disponibilità e resilienza nel sistema.
+
+
+
+[[cluster-design]]
+=== Progettazione del cluster
+
+Novus utilizza un cluster multi-host per garantire elevata disponibilità e tolleranza ai guasti per i servizi NDD.
+
+Tre host con tre domini di guasto:: Il cluster NDD minimo è composto da tre host fisici o macchine virtuali (VM) distribuiti su server separati. Ogni host esegue un processo MDS e un nodo di archiviazione dei metadati. Il cluster è progettato per sopravvivere alla perdita di un host.
+Tutte le repliche servono:: Ogni replica MDS gestisce i client contemporaneamente, senza che alcuna sia designata in modalità standby. Tutte le repliche integre annunciano lo stesso VIP tramite BGP. BFD (fast link-failure detection) è necessario perché i timer di BGP da soli non costituiscono un meccanismo di failover completamente accettabile. Una replica annuncia il VIP solo quando il suo servizio NFS, il gateway e la connessione all'archivio dei metadati sono tutti pronti per gestire i client.
+Replica dei metadati:: L'archivio distribuito dei metadati mantiene tre copie sincrone. Un arbitro impedisce uno scenario di split-brain scegliendo di diventare indisponibile anziché consentire a entrambe le parti di scrivere.
+I riavvii sono sicuri:: I processi MDS non mantengono alcuno stato proprio; il repository distribuito dei metadati contiene i metadati autorevoli.
+
+
+
+
+[[limitations-and-cautions]]
+=== Limitazioni e precauzioni
+
+Dovresti inoltre tenere presenti le seguenti limitazioni e precauzioni:
+
+* La proprietà dei sottoalberi non passa automaticamente in failover. Lo spazio dei nomi può essere suddiviso in sottoalberi, ognuno di proprietà di un MDS. Se un proprietario non è disponibile, il relativo sottoalbero rimane bloccato finché il proprietario non torna, anche se il VIP è già stato spostato.
+* Il guasto di un host influisce su tutti i tenant su quell'host, poiché ogni tenant dispone di una replica per host.
+* I client devono montare la VIP e non un IP host. In caso contrario, il client non può eseguire il failover.
+* I mount hard potrebbero bloccarsi durante il ripristino. Un mount bloccato non significa che i dati siano andati persi.
+* Esegui sempre la manutenzione di una replica alla volta. Rimuovi prima la replica dal VIP e svuotala.
+
